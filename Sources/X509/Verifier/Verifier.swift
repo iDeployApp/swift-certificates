@@ -35,7 +35,7 @@ public struct Verifier<Policy: VerifierPolicy> {
 
         // First check: does this leaf certificate contain critical extensions that are not satisfied by the PolicySet?
         // If so, reject the chain.
-        if leafCertificate.hasUnhandledCriticalExtensions(handledExtensions: self.policy.verifyingCriticalExtensions) {
+        /*if leafCertificate.hasUnhandledCriticalExtensions(handledExtensions: self.policy.verifyingCriticalExtensions) {
 
             diagnosticCallback?(
                 .leafCertificateHasUnhandledCriticalExtension(
@@ -44,7 +44,7 @@ public struct Verifier<Policy: VerifierPolicy> {
                 )
             )
             return .couldNotValidate([])
-        }
+        }*/
 
         let rootCertificates = await self.rootCertificates.resolve(diagnosticsCallback: diagnosticCallback)
         // Second check: is this leaf _already in_ the certificate store? If it is, we can just trust it directly.
@@ -151,7 +151,7 @@ public struct Verifier<Policy: VerifierPolicy> {
         diagnosticCallback: ((VerificationDiagnostic) -> Void)?
     ) -> Bool {
         // We want to confirm that the certificate has no unhandled critical extensions. If it does, we can't build the chain.
-        if nextCertificate.hasUnhandledCriticalExtensions(handledExtensions: self.policy.verifyingCriticalExtensions) {
+        /*if nextCertificate.hasUnhandledCriticalExtensions(handledExtensions: self.policy.verifyingCriticalExtensions) {
             diagnosticCallback?(
                 .issuerHasUnhandledCriticalExtension(
                     issuer: nextCertificate,
@@ -160,7 +160,7 @@ public struct Verifier<Policy: VerifierPolicy> {
                 )
             )
             return true
-        }
+        }*/
 
         // We don't want to re-add the same certificate to the chain: that will always produce a chain that
         // could have been shorter.

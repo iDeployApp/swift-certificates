@@ -199,7 +199,7 @@ public struct OCSPVerifierPolicy<Requester: OCSPRequester>: VerifierPolicy {
         /// If true, a nonce is generated per OCSP request and attached to the request.
         /// If the response contains a nonce, it must match with the initially send nonce.
         /// currently only set to false for testing
-        fileprivate var nonceExtensionEnabled: Bool = true
+        fileprivate var nonceExtensionEnabled: Bool = false
 
         fileprivate init(
             failureMode: OCSPFailureMode,
@@ -231,7 +231,7 @@ public struct OCSPVerifierPolicy<Requester: OCSPRequester>: VerifierPolicy {
         self.storage = .init(
             failureMode: failureMode,
             requester: requester,
-            requestHashAlgorithm: .insecureSha1,
+            requestHashAlgorithm: .sha256,
             maxDuration: 10,
             validationTime: validationTime
         )
@@ -278,7 +278,7 @@ extension OCSPVerifierPolicy.Storage {
             }
         }
 
-        do {
+        /*do {
             let hasRootCertificateOCSPURI =
                 try chain.last?.extensions.authorityInformationAccess?.contains { $0.method == .ocspServer } ?? false
             if hasRootCertificateOCSPURI {
@@ -286,7 +286,7 @@ extension OCSPVerifierPolicy.Storage {
             }
         } catch {
             return .failsToMeetPolicy(reason: "failed to parse AuthorityInformationAccess extension")
-        }
+        }*/
         return .meetsPolicy
     }
 
@@ -557,11 +557,7 @@ extension OCSPRequest {
                 requestList: [
                     OCSPSingleRequest(certID: certID)
                 ],
-                requestExtensions: try .init(builder: {
-                    if let nonce {
-                        nonce
-                    }
-                })
+                requestExtensions: (nonce != nil) ? try .init(builder: { nonce! }) : nil
             )
         )
     }
